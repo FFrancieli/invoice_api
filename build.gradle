@@ -21,12 +21,11 @@ repositories {
 	mavenCentral()
 }
 
-
 dependencies {
-	compile('org.flywaydb:flyway-core')
-    compile 'org.springframework.boot:spring-boot-starter-data-rest'
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.boot:spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-devtools')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.postgresql:postgresql')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
