@@ -22,8 +22,8 @@ public class InvoiceService {
     public ResponseEntity<InvoiceResponse> createInvoice(InvoicePayload payload) {
         Invoice invoice = new Invoice(payload);
 
-        repository.save(invoice);
+        Invoice savedEntity = repository.save(invoice);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(new InvoiceResponse(savedEntity), HttpStatus.CREATED);
     }
 }

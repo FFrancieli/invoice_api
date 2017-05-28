@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -28,6 +29,7 @@ public class InvoiceServiceTest {
     InvoiceRepository repository;
 
     InvoicePayload payload;
+    Invoice invoice;
 
     InvoiceService service;
 
@@ -36,6 +38,9 @@ public class InvoiceServiceTest {
         initMocks(this);
 
         payload = buildInvoicePayload();
+        invoice = new Invoice(payload);
+
+        when(repository.save(any(Invoice.class))).thenReturn(invoice);
 
         service = new InvoiceService(repository);
     }
@@ -50,8 +55,6 @@ public class InvoiceServiceTest {
     @Test
     public void savesInvoiceWithCorrectData() throws Exception {
         ArgumentCaptor<Invoice> entityCaptor = ArgumentCaptor.forClass(Invoice.class);
-
-        InvoicePayload payload = buildInvoicePayload();
 
         service.createInvoice(payload);
 
@@ -70,14 +73,18 @@ public class InvoiceServiceTest {
 
     @Test
     public void returnsHttpStatusCreatedWhenInvoiceIsCreatedOnDatabase() throws Exception {
-        InvoicePayload payload = buildInvoicePayload();
-        Invoice invoice = new Invoice(payload);
-
-        when(repository.save(any(Invoice.class))).thenReturn(invoice);
-
         ResponseEntity<InvoiceResponse> response = service.createInvoice(payload);
 
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
+    }
+
+    @Test
+    public void returnsSavedInvoiceDetails() throws Exception {
+        ResponseEntity<InvoiceResponse> response = service.createInvoice(payload);
+
+        InvoiceResponse expectedBody = new InvoiceResponse(invoice);
+
+        assertThat(response.getBody(), samePropertyValuesAs(expectedBody));
     }
 
     private InvoicePayload buildInvoicePayload() {
