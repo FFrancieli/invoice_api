@@ -20,6 +20,9 @@ public class Invoice {
     private BigDecimal vatAmount;
     private BigDecimal total;
 
+    public Invoice() {
+    }
+
     public Invoice(InvoicePayload payload) {
         this.customerId = payload.getCustomerId();
         this.addressId = payload.getAddressId();
@@ -56,5 +59,41 @@ public class Invoice {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setTypeLocalized(String typeLocalized) {
+        this.typeLocalized = typeLocalized;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setVatAmount(BigDecimal vatAmount) {
+        this.vatAmount = vatAmount;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
