@@ -1,10 +1,9 @@
-package services;
+package com.acme.services;
 
 import com.acme.models.Invoice;
 import com.acme.models.InvoicePayload;
 import com.acme.models.InvoiceResponse;
 import com.acme.repositories.InvoiceRepository;
-import com.acme.services.InvoiceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
