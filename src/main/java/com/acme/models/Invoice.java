@@ -1,13 +1,16 @@
 package com.acme.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 public class Invoice {
 
     @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "invoice_seq_gen")
+    @SequenceGenerator(name = "invoice_seq_gen", sequenceName = "public.invoice_id_seq")
     private Long id;
     private Long customerId;
     private String addressId;
