@@ -15,7 +15,7 @@ public class InvoicePayload {
     private String startDate;
     private String endDate;
     private String periodDescription;
-    
+
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }

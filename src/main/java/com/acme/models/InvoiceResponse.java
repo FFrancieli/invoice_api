@@ -1,11 +1,10 @@
 package com.acme.models;
 
+import com.acme.parsers.TimestampParser;
+
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.TimeZone;
+
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
 public class InvoiceResponse {
 
@@ -31,15 +30,10 @@ public class InvoiceResponse {
         this.amount = invoice.getAmount();
         this.vatAmount = invoice.getVatAmount();
         this.total = invoice.getTotal();
-        this.paymentDueDate = formatTimestamp(invoice.getPaymentDueDate());
-        this.startDate = formatTimestamp(invoice.getStartDate());
-        this.endDate = formatTimestamp(invoice.getEndDate());
+        this.paymentDueDate = TimestampParser.toString(invoice.getPaymentDueDate(), ISO_LOCAL_DATE_TIME);
+        this.startDate = TimestampParser.toString(invoice.getStartDate(), ISO_LOCAL_DATE_TIME);
+        this.endDate = TimestampParser.toString(invoice.getEndDate(), ISO_LOCAL_DATE_TIME);
         this.periodDescription = invoice.getPeriodDescription();
-    }
-
-    private String formatTimestamp(Timestamp timestamp) {
-        return ZonedDateTime.of(timestamp.toLocalDateTime(), ZoneId.of(TimeZone.getDefault().getID()))
-                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     public Long getId() {
