@@ -4,6 +4,7 @@ import com.acme.models.InvoicePayload;
 import com.acme.models.InvoiceResponse;
 import com.acme.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,8 @@ public class InvoiceController {
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody InvoicePayload payload) {
-        return service.createInvoice(payload);
+        InvoiceResponse invoice = service.createInvoice(payload);
+
+        return new ResponseEntity<>(invoice, HttpStatus.CREATED);
     }
 }

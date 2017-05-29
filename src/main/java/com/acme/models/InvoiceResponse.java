@@ -21,6 +21,9 @@ public class InvoiceResponse {
     private String endDate;
     private String periodDescription;
 
+    public InvoiceResponse() {
+    }
+
     public InvoiceResponse(Invoice invoice) {
         this.id = invoice.getId();
         this.customerId = invoice.getCustomerId();

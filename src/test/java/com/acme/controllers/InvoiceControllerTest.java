@@ -58,7 +58,7 @@ public class InvoiceControllerTest {
 
     @Test
     public void returnsHttpStatusCreatedWhenInvoiceIsSuccessfullyPosted() throws Exception {
-        when(service.createInvoice(payload)).thenReturn(new ResponseEntity(HttpStatus.CREATED));
+        when(service.createInvoice(payload)).thenReturn(new InvoiceResponse());
 
         ResponseEntity<InvoiceResponse> response = controller.createInvoice(payload);
 

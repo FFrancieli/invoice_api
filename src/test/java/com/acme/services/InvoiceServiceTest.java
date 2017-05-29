@@ -8,8 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 
@@ -17,9 +15,7 @@ import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class InvoiceServiceTest {
@@ -71,19 +67,12 @@ public class InvoiceServiceTest {
     }
 
     @Test
-    public void returnsHttpStatusCreatedWhenInvoiceIsCreatedOnDatabase() throws Exception {
-        ResponseEntity<InvoiceResponse> response = service.createInvoice(payload);
-
-        assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
-    }
-
-    @Test
     public void returnsSavedInvoiceDetails() throws Exception {
-        ResponseEntity<InvoiceResponse> response = service.createInvoice(payload);
+        InvoiceResponse response = service.createInvoice(payload);
 
         InvoiceResponse expectedBody = new InvoiceResponse(invoice);
 
-        assertThat(response.getBody(), samePropertyValuesAs(expectedBody));
+        assertThat(response, samePropertyValuesAs(expectedBody));
     }
 
     private InvoicePayload buildInvoicePayload() {
