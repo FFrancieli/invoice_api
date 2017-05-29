@@ -126,4 +126,16 @@ public class Invoice {
     public Timestamp getEndDate() {
         return endDate;
     }
+
+    public void setPaymentDueDate(Timestamp paymentDueDate) {
+        this.paymentDueDate = paymentDueDate;
+    }
+
+    public void setEndDate(Timestamp endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
 }

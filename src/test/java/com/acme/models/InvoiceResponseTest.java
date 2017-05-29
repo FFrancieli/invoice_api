@@ -3,6 +3,7 @@ package com.acme.models;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -23,6 +24,10 @@ public class InvoiceResponseTest {
         assertThat(response.getAmount(), is(invoice.getAmount()));
         assertThat(response.getVatAmount(), is(invoice.getVatAmount()));
         assertThat(response.getTotal(), is(invoice.getTotal()));
+        assertThat(response.getPaymentDueDate(), is("2014-11-13T00:00:00"));
+        assertThat(response.getStartDate(), is("2014-11-13T00:00:00"));
+        assertThat(response.getEndDate(), is("2014-11-13T00:00:00"));
+        assertThat(response.getPeriodDescription(), is(invoice.getPeriodDescription()));
     }
 
     private Invoice buildInvoiceEntity() {
@@ -36,6 +41,9 @@ public class InvoiceResponseTest {
         invoice.setAmount(new BigDecimal("150.99"));
         invoice.setVatAmount(new BigDecimal("1.01"));
         invoice.setTotal(new BigDecimal("152.00"));
+        invoice.setPaymentDueDate(new Timestamp(1415844000000L));
+        invoice.setEndDate(new Timestamp(1415844000000L));
+        invoice.setStartDate(new Timestamp(1415844000000L));
 
         return invoice;
     }

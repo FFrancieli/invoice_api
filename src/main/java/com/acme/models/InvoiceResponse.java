@@ -1,6 +1,11 @@
 package com.acme.models;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 public class InvoiceResponse {
 
@@ -12,6 +17,10 @@ public class InvoiceResponse {
     private BigDecimal amount;
     private BigDecimal vatAmount;
     private BigDecimal total;
+    private String paymentDueDate;
+    private String startDate;
+    private String endDate;
+    private String periodDescription;
 
     public InvoiceResponse(Invoice invoice) {
         this.id = invoice.getId();
@@ -22,6 +31,15 @@ public class InvoiceResponse {
         this.amount = invoice.getAmount();
         this.vatAmount = invoice.getVatAmount();
         this.total = invoice.getTotal();
+        this.paymentDueDate = formatTimestamp(invoice.getPaymentDueDate());
+        this.startDate = formatTimestamp(invoice.getStartDate());
+        this.endDate = formatTimestamp(invoice.getEndDate());
+        this.periodDescription = invoice.getPeriodDescription();
+    }
+
+    private String formatTimestamp(Timestamp timestamp) {
+        return ZonedDateTime.of(timestamp.toLocalDateTime(), ZoneId.of(TimeZone.getDefault().getID()))
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     public Long getId() {
@@ -54,5 +72,21 @@ public class InvoiceResponse {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    public String getPaymentDueDate() {
+        return paymentDueDate;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public String getPeriodDescription() {
+        return periodDescription;
     }
 }
