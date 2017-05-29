@@ -11,6 +11,11 @@ public class InvoicePayload {
     private BigDecimal amount;
     private BigDecimal vatAmount;
     private BigDecimal total;
+    private String paymentDueDate;
+    private String startDate;
+    private String endDate;
+    private String periodDescription;
+
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
@@ -66,5 +71,37 @@ public class InvoicePayload {
 
     public BigDecimal getTotal() {
         return total;
+    }
+
+    public void setPaymentDueDate(String paymentDueDate) {
+        this.paymentDueDate = paymentDueDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public void setPeriodDescription(String periodDescription) {
+        this.periodDescription = periodDescription;
+    }
+
+    public String getPeriodDescription() {
+        return periodDescription;
+    }
+
+    public String getPaymentDueDate() {
+        return paymentDueDate;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
     }
 }

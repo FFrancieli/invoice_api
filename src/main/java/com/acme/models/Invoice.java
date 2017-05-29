@@ -1,7 +1,13 @@
 package com.acme.models;
 
-import javax.persistence.*;
+import com.acme.parsers.TimestampParser;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -19,6 +25,10 @@ public class Invoice {
     private BigDecimal amount;
     private BigDecimal vatAmount;
     private BigDecimal total;
+    private String periodDescription;
+    private Timestamp paymentDueDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
 
     public Invoice() {
     }
@@ -31,6 +41,10 @@ public class Invoice {
         this.amount = payload.getAmount();
         this.vatAmount = payload.getVatAmount();
         this.total = payload.getTotal();
+        this.periodDescription = payload.getPeriodDescription();
+        this.paymentDueDate = TimestampParser.fromString(payload.getPaymentDueDate());
+        this.startDate = TimestampParser.fromString(payload.getStartDate());
+        this.endDate = TimestampParser.fromString(payload.getEndDate());
     }
 
     public Long getCustomerId() {
@@ -95,5 +109,21 @@ public class Invoice {
 
     public Long getId() {
         return id;
+    }
+
+    public String getPeriodDescription() {
+        return periodDescription;
+    }
+
+    public Timestamp getPaymentDueDate() {
+        return paymentDueDate;
+    }
+
+    public Timestamp getStartDate() {
+        return startDate;
+    }
+
+    public Timestamp getEndDate() {
+        return endDate;
     }
 }

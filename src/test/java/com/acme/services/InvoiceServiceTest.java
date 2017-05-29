@@ -96,6 +96,10 @@ public class InvoiceServiceTest {
         payload.setAmount(new BigDecimal(165.29));
         payload.setVatAmount(new BigDecimal(34.71));
         payload.setTotal(new BigDecimal(200));
+        payload.setPaymentDueDate("2017-01-20T00:00:00");
+        payload.setStartDate("2017-01-01T00:00:00");
+        payload.setEndDate("2017-12-20T00:00:00");
+        payload.setPeriodDescription("periodDescription");
 
         return payload;
     }

@@ -1,11 +1,12 @@
 package com.acme.models;
 
+import com.acme.parsers.TimestampParser;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class InvoiceTest {
 
@@ -22,6 +23,12 @@ public class InvoiceTest {
         assertThat(invoice.getAmount(), is(payload.getAmount()));
         assertThat(invoice.getVatAmount(), is(payload.getVatAmount()));
         assertThat(invoice.getTotal(), is(payload.getTotal()));
+        assertThat(invoice.getPeriodDescription(), is(payload.getPeriodDescription()));
+
+        assertThat(invoice.getPaymentDueDate(), is(TimestampParser.fromString(payload.getPaymentDueDate())));
+        assertThat(invoice.getStartDate(), is(TimestampParser.fromString(payload.getStartDate())));
+        assertThat(invoice.getEndDate(), is(TimestampParser.fromString(payload.getEndDate())));
+
     }
 
     private InvoicePayload buildInvoicePayload() {
@@ -34,6 +41,10 @@ public class InvoiceTest {
         payload.setAmount(new BigDecimal(165.29));
         payload.setVatAmount(new BigDecimal(34.71));
         payload.setTotal(new BigDecimal(200));
+        payload.setPaymentDueDate("2017-01-20T00:00:00");
+        payload.setStartDate("2017-01-01T00:00:00");
+        payload.setEndDate("2017-12-20T00:00:00");
+        payload.setPeriodDescription("periodDescription");
 
         return payload;
     }
