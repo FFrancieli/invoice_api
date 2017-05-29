@@ -10,7 +10,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -36,6 +42,9 @@ public class InvoiceServiceTest {
         invoice = new Invoice(payload);
 
         when(repository.save(any(Invoice.class))).thenReturn(invoice);
+
+        List<Invoice> invoices = Arrays.asList(buildInvoice(1L), buildInvoice(2L));
+        when(repository.findByCustomerId(anyLong())).thenReturn(invoices);
 
         service = new InvoiceService(repository);
     }
@@ -75,6 +84,44 @@ public class InvoiceServiceTest {
         assertThat(response, samePropertyValuesAs(expectedBody));
     }
 
+    @Test
+    public void retrievesInvoicesByCustomerId() throws Exception {
+        service.getByCustomerId(anyLong());
+
+        verify(repository, times(1)).findByCustomerId(anyLong());
+    }
+
+    @Test
+    public void retrievesInvoicesForCorrectUserId() throws Exception {
+        ArgumentCaptor<Long> customerIdCaptor = ArgumentCaptor.forClass(Long.class);
+
+        service.getByCustomerId(987L);
+
+        verify(repository, times(1)).findByCustomerId(customerIdCaptor.capture());
+
+        assertThat(customerIdCaptor.getValue(), is(987L));
+    }
+
+    @Test
+    public void returnsInvoicesFoundForCustomerId() throws Exception {
+        List<InvoiceResponse> foundInvoices = service.getByCustomerId(anyLong());
+
+        verify(repository, times(1)).findByCustomerId(anyLong());
+
+        assertThat(foundInvoices, hasSize(2));
+    }
+
+    @Test
+    public void returnsEmptyListWhenInvoicesAreNotFoundForCustomerId() throws Exception {
+        when(repository.findByCustomerId(anyLong())).thenReturn(Collections.emptyList());
+
+        List<InvoiceResponse> foundInvoices = service.getByCustomerId(anyLong());
+
+        verify(repository, times(1)).findByCustomerId(anyLong());
+
+        assertThat(foundInvoices, is(empty()));
+    }
+
     private InvoicePayload buildInvoicePayload() {
         InvoicePayload payload = new InvoicePayload();
 
@@ -91,5 +138,24 @@ public class InvoiceServiceTest {
         payload.setPeriodDescription("periodDescription");
 
         return payload;
+    }
+
+    private Invoice buildInvoice(Long id) {
+        Invoice invoice = new Invoice();
+
+        invoice.setId(id);
+        invoice.setCustomerId(1L);
+        invoice.setAddressId("4146J34FJ");
+        invoice.setType("ShopPurchase");
+        invoice.setTypeLocalized("Winkel aabkoop");
+        invoice.setAmount(new BigDecimal(165.29));
+        invoice.setVatAmount(new BigDecimal(34.71));
+        invoice.setTotal(new BigDecimal(200));
+        invoice.setPaymentDueDate(new Timestamp(1415844000000L));
+        invoice.setStartDate(new Timestamp(1415844000000L));
+        invoice.setEndDate(new Timestamp(1415844000000L));
+        invoice.setPeriodDescription("periodDescription");
+
+        return invoice;
     }
 }

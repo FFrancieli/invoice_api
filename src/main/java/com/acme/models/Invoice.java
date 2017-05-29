@@ -138,4 +138,8 @@ public class Invoice {
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
+
+    public void setPeriodDescription(String periodDescription) {
+        this.periodDescription = periodDescription;
+    }
 }
