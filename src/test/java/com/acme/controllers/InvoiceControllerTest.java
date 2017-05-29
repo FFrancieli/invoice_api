@@ -11,14 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class InvoiceControllerTest {
@@ -65,6 +68,54 @@ public class InvoiceControllerTest {
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
     }
 
+    @Test
+    public void retrievesInvoicesByCustomerId() throws Exception {
+        controller.retrieveByCustomerId(anyLong());
+
+        verify(service, times(1)).getByCustomerId(anyLong());
+    }
+
+    @Test
+    public void retrievesInvoicesUsingCorrectUserId() throws Exception {
+        ArgumentCaptor<Long> customerIdCaptor = ArgumentCaptor.forClass(Long.class);
+
+        controller.retrieveByCustomerId(23L);
+
+        verify(service, times(1)).getByCustomerId(customerIdCaptor.capture());
+
+        assertThat(customerIdCaptor.getValue(), is(23L));
+    }
+
+    @Test
+    public void returnsHttpStatusOkWhenInvoicesAreFoundForCustomerId() throws Exception {
+        when(service.getByCustomerId(anyLong()))
+                .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
+
+
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+    }
+
+    @Test
+    public void returnsInvoicesFoundForCustomerId() throws Exception {
+        when(service.getByCustomerId(anyLong()))
+                .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
+
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+
+        assertThat(response.getBody(), hasSize(2));
+    }
+
+    @Test
+    public void returnsHttpStatusNotFoundWhenThereIsNoInvoiceForCustomerId() throws Exception {
+        when(service.getByCustomerId(anyLong())).thenReturn(Collections.emptyList());
+
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    }
+
     private InvoicePayload generateInvoicePayload() {
         InvoicePayload payload = new InvoicePayload();
         payload.setAmount(new BigDecimal("13.90"));
@@ -75,5 +126,13 @@ public class InvoiceControllerTest {
         payload.setType("type");
         payload.setTypeLocalized("Type localized");
         return payload;
+    }
+
+    private InvoiceResponse buildInvoiceResponse(Long id) {
+        InvoiceResponse response = new InvoiceResponse();
+
+        response.setId(id);
+
+        return response;
     }
 }

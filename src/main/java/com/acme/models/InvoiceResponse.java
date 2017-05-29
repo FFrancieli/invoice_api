@@ -86,4 +86,8 @@ public class InvoiceResponse {
     public String getPeriodDescription() {
         return periodDescription;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
