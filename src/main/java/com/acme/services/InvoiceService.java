@@ -36,20 +36,29 @@ public class InvoiceService {
         return entityToInvoiceResponse(invoices);
     }
 
-    public List<InvoiceResponse> findByFilter(Long customerId, String addressId){
+    public List<InvoiceResponse> findByFilter(Long customerId, String addressId, Integer month){
+        Map<String, Object> query = buildQueryParameters(customerId, addressId, month);
+
+        List<Invoice> invoices = repository.findByFilter(query);
+
+        return entityToInvoiceResponse(invoices);
+    }
+
+    private Map<String, Object> buildQueryParameters(Long customerId, String addressId, Integer month) {
         Map<String,Object> query = new HashMap<>();
 
         if (customerId != null) {
             query.put("customerId", customerId);
         }
 
-        if(addressId != null) {
+        if (addressId != null) {
             query.put("addressId", addressId);
         }
 
-        List<Invoice> invoices = repository.findByFilter(query);
-
-        return entityToInvoiceResponse(invoices);
+        if (month != null) {
+            query.put("startDate", month);
+        }
+        return query;
     }
 
     private List<InvoiceResponse> entityToInvoiceResponse(List<Invoice> invoices) {

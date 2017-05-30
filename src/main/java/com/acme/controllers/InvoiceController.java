@@ -31,9 +31,10 @@ public class InvoiceController {
     @GetMapping
     public ResponseEntity<List<InvoiceResponse>> retrieveInvoiceBy(
             @RequestParam(value = "customerId") Long customerId,
-            @RequestParam(value = "addressId", required = false) String addressId) {
+            @RequestParam(value = "addressId", required = false) String addressId,
+            @RequestParam(value = "month", required = false) Integer month) {
 
-        List<InvoiceResponse> invoices = service.findByFilter(customerId, addressId);
+        List<InvoiceResponse> invoices = service.findByFilter(customerId, addressId, month);
 
         if (invoices.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

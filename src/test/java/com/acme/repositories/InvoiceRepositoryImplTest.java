@@ -19,6 +19,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class InvoiceRepositoryImplTest {
 
+    private static final int MONTH = 4;
+
     @Mock
     private EntityManager entityManager;
 
@@ -54,6 +56,21 @@ public class InvoiceRepositoryImplTest {
         verify(entityManager, times(1)).createQuery(sqlQueryCaptor.capture());
 
         assertThat(sqlQueryCaptor.getValue(), is("SELECT i FROM Invoice i WHERE some = :some AND id = :id "));
+    }
+
+    @Test
+    public void createsQueryWithCorrectSqlStatementForMonthSearch() throws Exception {
+        ArgumentCaptor<String> sqlQueryCaptor = ArgumentCaptor.forClass(String.class);
+
+        Map<String, Object> parameters = getQueryParameters();
+        parameters.put("startDate", MONTH);
+
+        customRepository.findByFilter(parameters);
+
+        verify(entityManager, times(1)).createQuery(sqlQueryCaptor.capture());
+
+        String expectedQuery = "SELECT i FROM Invoice i WHERE some = :some AND id = :id AND EXTRACT(MONTH FROM startDate) = :startDate ";
+        assertThat(sqlQueryCaptor.getValue(), is(expectedQuery));
     }
 
     @Test

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     InvoiceRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -32,14 +32,29 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         if (! parameters.isEmpty()) {
             stringBuilder.append(" WHERE ");
 
-            parameters.forEach((column, value) -> {
-                stringBuilder.append(column + " = :" + column + " AND ");
-            });
+            parameters.forEach((column, value) ->
+                queryConditionalWrapper(stringBuilder, column));
 
             stringBuilder.delete(stringBuilder.length() - 5, stringBuilder.length() - 1);
         }
 
         return stringBuilder.toString();
+    }
+
+    private void queryConditionalWrapper(StringBuilder stringBuilder, String column) {
+        if (isStartDateColumn(column)) {
+            stringBuilder.append(extractMonthFromDateFieldWrapper(column));
+        } else {
+            stringBuilder.append(column + " = :" + column + " AND ");
+        }
+    }
+
+    private String extractMonthFromDateFieldWrapper(String column) {
+        return String.format("EXTRACT(MONTH FROM %s) = :%s AND ", column, column);
+    }
+
+    private boolean isStartDateColumn(String column) {
+        return column.equals("startDate");
     }
 
     private void setQueryParameters(Query query, Map<String, Object> parameters) {
