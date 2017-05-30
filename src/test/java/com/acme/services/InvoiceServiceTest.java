@@ -173,18 +173,6 @@ public class InvoiceServiceTest {
     }
 
     @Test
-    public void doesNotAddInvoiceTypeToQueryWhenItIsNotPresent() throws Exception {
-        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
-
-        service.findByFilter(null, null, null, null);
-
-        verify(repository, times(1)).findByFilter(queryCaptor.capture());
-
-        Map<String, Object> query = queryCaptor.getValue();
-        assertThat(query.size(), is(0) );
-    }
-
-    @Test
     public void accumulatesQueryParameters() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
