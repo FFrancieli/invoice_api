@@ -11,13 +11,9 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -45,6 +41,7 @@ public class InvoiceServiceTest {
 
         List<Invoice> invoices = Arrays.asList(buildInvoice(1L), buildInvoice(2L));
         when(repository.findByCustomerId(anyLong())).thenReturn(invoices);
+        when(repository.findByFilter(anyMap())).thenReturn(invoices);
 
         service = new InvoiceService(repository);
     }
@@ -120,6 +117,75 @@ public class InvoiceServiceTest {
         verify(repository, times(1)).findByCustomerId(anyLong());
 
         assertThat(foundInvoices, is(empty()));
+    }
+
+    @Test
+    public void findInvoicesByFilter() throws Exception {
+        service.findByFilter(123L, "addressId");
+
+        verify(repository, times(1)).findByFilter(anyMap());
+    }
+
+    @Test
+    public void addsCustomerIdToQueryWhenItIsPresent() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(123L, null);
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+        assertThat(query, hasKey("customerId"));
+        assertThat(query, hasValue(123L));
+        assertThat(query.size(), is(1) );
+    }
+
+    @Test
+    public void doesNotAddCustomerIdToQueryWhenItIsPresent() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(null, null);
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+
+        assertThat(query.isEmpty(), is(true));
+    }
+
+    @Test
+    public void AddsAddressIdToQueryWhenItIsPresent() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(null, "someAddressId");
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+        assertThat(query, hasKey("addressId"));
+        assertThat(query, hasValue("someAddressId"));
+        assertThat(query.size(), is(1) );
+    }
+
+    @Test
+    public void accumulatesQueryParameters() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(123L, "someAddressId");
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+        assertThat(query, hasKey("addressId"));
+        assertThat(query, hasKey("customerId"));
+        assertThat(query.size(), is(2) );
+    }
+
+    @Test
+    public void returnsInvoicesFoundByFilter() throws Exception {
+        List<InvoiceResponse> invoices = service.findByFilter(123L, "someAddressId");
+
+        assertThat(invoices, hasSize(2));
     }
 
     private InvoicePayload buildInvoicePayload() {

@@ -26,6 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class InvoiceControllerTest {
 
+    public static final long CUSTOMER_ID = 23L;
     @Mock
     InvoiceService service;
 
@@ -69,49 +70,37 @@ public class InvoiceControllerTest {
     }
 
     @Test
-    public void retrievesInvoicesByCustomerId() throws Exception {
-        controller.retrieveByCustomerId(anyLong());
+    public void getsInvoiceThatMatchFilterFromDatabase() throws Exception {
+        controller.retrieveInvoiceBy(CUSTOMER_ID, "addressId");
 
-        verify(service, times(1)).getByCustomerId(anyLong());
+        verify(service, times(1)).findByFilter(CUSTOMER_ID, "addressId");
     }
 
     @Test
-    public void retrievesInvoicesUsingCorrectUserId() throws Exception {
-        ArgumentCaptor<Long> customerIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-        controller.retrieveByCustomerId(23L);
-
-        verify(service, times(1)).getByCustomerId(customerIdCaptor.capture());
-
-        assertThat(customerIdCaptor.getValue(), is(23L));
-    }
-
-    @Test
-    public void returnsHttpStatusOkWhenInvoicesAreFoundForCustomerId() throws Exception {
-        when(service.getByCustomerId(anyLong()))
+    public void returnsHttpStatusOkWhenThereAreInvoicesAThatMatchFilter() throws Exception {
+        when(service.findByFilter(anyLong(), anyString()))
                 .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
 
-
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString());
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
-    public void returnsInvoicesFoundForCustomerId() throws Exception {
-        when(service.getByCustomerId(anyLong()))
+    public void returnsInvoicesThatMatchFilter() throws Exception {
+        when(service.findByFilter(anyLong(), anyString()))
                 .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
 
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString());
 
         assertThat(response.getBody(), hasSize(2));
     }
 
     @Test
-    public void returnsHttpStatusNotFoundWhenThereIsNoInvoiceForCustomerId() throws Exception {
+    public void returnsHttpStatusNotFoundWhenThereIsNoInvoiceThatMatchesFilter() throws Exception {
         when(service.getByCustomerId(anyLong())).thenReturn(Collections.emptyList());
 
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveByCustomerId(anyLong());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString());
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }
@@ -119,7 +108,7 @@ public class InvoiceControllerTest {
     private InvoicePayload generateInvoicePayload() {
         InvoicePayload payload = new InvoicePayload();
         payload.setAmount(new BigDecimal("13.90"));
-        payload.setCustomerId(23L);
+        payload.setCustomerId(CUSTOMER_ID);
         payload.setAddressId("1238F0azo2");
         payload.setTotal(new BigDecimal("15.90"));
         payload.setVatAmount(new BigDecimal("2.00"));

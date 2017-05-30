@@ -7,7 +7,9 @@ import com.acme.repositories.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +36,21 @@ public class InvoiceService {
         return entityToInvoiceResponse(invoices);
     }
 
+    public List<InvoiceResponse> findByFilter(Long customerId, String addressId){
+        Map<String,Object> query = new HashMap<>();
+
+        if (customerId != null) {
+            query.put("customerId", customerId);
+        }
+
+        if(addressId != null) {
+            query.put("addressId", addressId);
+        }
+
+        List<Invoice> invoices = repository.findByFilter(query);
+
+        return entityToInvoiceResponse(invoices);
+    }
 
     private List<InvoiceResponse> entityToInvoiceResponse(List<Invoice> invoices) {
         return invoices.stream().map(InvoiceResponse::new).collect(Collectors.toList());
