@@ -44,7 +44,6 @@ public class InvoiceServiceTest {
         when(repository.save(any(Invoice.class))).thenReturn(invoice);
 
         List<Invoice> invoices = Arrays.asList(buildInvoice(1L), buildInvoice(2L));
-        when(repository.findByCustomerId(anyLong())).thenReturn(invoices);
         when(repository.findByFilter(anyMap())).thenReturn(invoices);
 
         service = new InvoiceService(repository);
@@ -83,44 +82,6 @@ public class InvoiceServiceTest {
         InvoiceResponse expectedBody = new InvoiceResponse(invoice);
 
         assertThat(response, samePropertyValuesAs(expectedBody));
-    }
-
-    @Test
-    public void retrievesInvoicesByCustomerId() throws Exception {
-        service.getByCustomerId(anyLong());
-
-        verify(repository, times(1)).findByCustomerId(anyLong());
-    }
-
-    @Test
-    public void retrievesInvoicesForCorrectUserId() throws Exception {
-        ArgumentCaptor<Long> customerIdCaptor = ArgumentCaptor.forClass(Long.class);
-
-        service.getByCustomerId(987L);
-
-        verify(repository, times(1)).findByCustomerId(customerIdCaptor.capture());
-
-        assertThat(customerIdCaptor.getValue(), is(987L));
-    }
-
-    @Test
-    public void returnsInvoicesFoundForCustomerId() throws Exception {
-        List<InvoiceResponse> foundInvoices = service.getByCustomerId(anyLong());
-
-        verify(repository, times(1)).findByCustomerId(anyLong());
-
-        assertThat(foundInvoices, hasSize(2));
-    }
-
-    @Test
-    public void returnsEmptyListWhenInvoicesAreNotFoundForCustomerId() throws Exception {
-        when(repository.findByCustomerId(anyLong())).thenReturn(Collections.emptyList());
-
-        List<InvoiceResponse> foundInvoices = service.getByCustomerId(anyLong());
-
-        verify(repository, times(1)).findByCustomerId(anyLong());
-
-        assertThat(foundInvoices, is(empty()));
     }
 
     @Test

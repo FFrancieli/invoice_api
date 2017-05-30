@@ -30,12 +30,6 @@ public class InvoiceService {
         return new InvoiceResponse(savedEntity);
     }
 
-    public List<InvoiceResponse> getByCustomerId(Long customerId) {
-        List<Invoice> invoices = repository.findByCustomerId(customerId);
-
-        return entityToInvoiceResponse(invoices);
-    }
-
     public List<InvoiceResponse> findByFilter(Long customerId, String addressId, Integer month, String invoiceType){
         Map<String, Object> query = buildQueryParameters(customerId, addressId, month, invoiceType);
 
