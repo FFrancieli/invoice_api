@@ -147,7 +147,7 @@ public class InvoiceServiceTest {
     }
 
     @Test
-    public void doesNotAddaMonthToQueryWhenItIsNotPresent() throws Exception {
+    public void doesNotAddMonthToQueryWhenItIsNotPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
         service.findByFilter(null, null, null, null);
