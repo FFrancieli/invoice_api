@@ -28,6 +28,7 @@ public class InvoiceControllerTest {
 
     private static final long CUSTOMER_ID = 23L;
     private static final Integer MONTH = 3;
+    private static final String INVOICE_TYPE = "ShopPurchase";
 
     @Mock
     InvoiceService service;
@@ -73,27 +74,27 @@ public class InvoiceControllerTest {
 
     @Test
     public void getsInvoiceThatMatchFilterFromDatabase() throws Exception {
-        controller.retrieveInvoiceBy(CUSTOMER_ID, "addressId", MONTH);
+        controller.retrieveInvoiceBy(CUSTOMER_ID, "addressId", MONTH, INVOICE_TYPE);
 
-        verify(service, times(1)).findByFilter(CUSTOMER_ID, "addressId", MONTH);
+        verify(service, times(1)).findByFilter(CUSTOMER_ID, "addressId", MONTH, INVOICE_TYPE);
     }
 
     @Test
     public void returnsHttpStatusOkWhenThereAreInvoicesAThatMatchFilter() throws Exception {
-        when(service.findByFilter(anyLong(), anyString(), anyInt()))
+        when(service.findByFilter(anyLong(), anyString(), anyInt(), anyString()))
                 .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
 
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt(), anyString());
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
     @Test
     public void returnsInvoicesThatMatchFilter() throws Exception {
-        when(service.findByFilter(anyLong(), anyString(), anyInt()))
+        when(service.findByFilter(anyLong(), anyString(), anyInt(), anyString()))
                 .thenReturn(Arrays.asList(buildInvoiceResponse(1L), buildInvoiceResponse(34L)));
 
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt(), anyString());
 
         assertThat(response.getBody(), hasSize(2));
     }
@@ -102,7 +103,7 @@ public class InvoiceControllerTest {
     public void returnsHttpStatusNotFoundWhenThereIsNoInvoiceThatMatchesFilter() throws Exception {
         when(service.getByCustomerId(anyLong())).thenReturn(Collections.emptyList());
 
-        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt());
+        ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt(), anyString());
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }

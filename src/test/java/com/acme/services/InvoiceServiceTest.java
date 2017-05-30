@@ -23,6 +23,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class InvoiceServiceTest {
 
     private static final Integer MONTH = 2;
+    private static final String INVOICE_TYPE = "ShopPurchase";
+
+
     @Mock
     InvoiceRepository repository;
 
@@ -122,7 +125,7 @@ public class InvoiceServiceTest {
 
     @Test
     public void findInvoicesByFilter() throws Exception {
-        service.findByFilter(123L, "addressId", MONTH);
+        service.findByFilter(123L, "addressId", MONTH, INVOICE_TYPE);
 
         verify(repository, times(1)).findByFilter(anyMap());
     }
@@ -131,7 +134,7 @@ public class InvoiceServiceTest {
     public void addsCustomerIdToQueryWhenItIsPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(123L, null, null);
+        service.findByFilter(123L, null, null, null);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -145,7 +148,7 @@ public class InvoiceServiceTest {
     public void doesNotAddCustomerIdToQueryWhenItIsPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(null, null, null);
+        service.findByFilter(null, null, null, null);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -158,7 +161,7 @@ public class InvoiceServiceTest {
     public void AddsAddressIdToQueryWhenItIsPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(null, "someAddressId", null);
+        service.findByFilter(null, "someAddressId", null, null);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -172,7 +175,7 @@ public class InvoiceServiceTest {
     public void AddsMonthToQueryWhenItIsPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(null, null, 10);
+        service.findByFilter(null, null, 10, null);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -186,7 +189,33 @@ public class InvoiceServiceTest {
     public void doesNotAddaMonthToQueryWhenItIsNotPresent() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(null, null, null);
+        service.findByFilter(null, null, null, null);
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+        assertThat(query.size(), is(0) );
+    }
+
+    @Test
+    public void AddsInvoiceTypeToQueryWhenItIsPresent() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(null, null, null, INVOICE_TYPE);
+
+        verify(repository, times(1)).findByFilter(queryCaptor.capture());
+
+        Map<String, Object> query = queryCaptor.getValue();
+        assertThat(query, hasKey("type"));
+        assertThat(query, hasValue(INVOICE_TYPE));
+        assertThat(query.size(), is(1) );
+    }
+
+    @Test
+    public void doesNotAddInvoiceTypeToQueryWhenItIsNotPresent() throws Exception {
+        ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
+
+        service.findByFilter(null, null, null, null);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -198,7 +227,7 @@ public class InvoiceServiceTest {
     public void accumulatesQueryParameters() throws Exception {
         ArgumentCaptor<Map> queryCaptor = ArgumentCaptor.forClass(Map.class);
 
-        service.findByFilter(123L, "someAddressId", MONTH);
+        service.findByFilter(123L, "someAddressId", MONTH, INVOICE_TYPE);
 
         verify(repository, times(1)).findByFilter(queryCaptor.capture());
 
@@ -206,12 +235,14 @@ public class InvoiceServiceTest {
         assertThat(query, hasKey("addressId"));
         assertThat(query, hasKey("customerId"));
         assertThat(query, hasKey("startDate"));
-        assertThat(query.size(), is(3) );
+        assertThat(query, hasKey("type"));
+
+        assertThat(query.size(), is(4) );
     }
 
     @Test
     public void returnsInvoicesFoundByFilter() throws Exception {
-        List<InvoiceResponse> invoices = service.findByFilter(123L, "someAddressId", MONTH);
+        List<InvoiceResponse> invoices = service.findByFilter(123L, "someAddressId", MONTH, INVOICE_TYPE);
 
         assertThat(invoices, hasSize(2));
     }
