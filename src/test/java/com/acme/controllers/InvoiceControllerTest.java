@@ -101,7 +101,7 @@ public class InvoiceControllerTest {
 
     @Test
     public void returnsHttpStatusNotFoundWhenThereIsNoInvoiceThatMatchesFilter() throws Exception {
-        when(service.getByCustomerId(anyLong())).thenReturn(Collections.emptyList());
+        when(service.findByFilter(anyLong(), anyString(), anyInt(), anyString())).thenReturn(Collections.emptyList());
 
         ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt(), anyString());
 
