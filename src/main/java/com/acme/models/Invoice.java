@@ -43,8 +43,14 @@ public class Invoice {
         this.total = payload.getTotal();
         this.periodDescription = payload.getPeriodDescription();
         this.paymentDueDate = TimestampParser.fromString(payload.getPaymentDueDate());
-        this.startDate = TimestampParser.fromString(payload.getStartDate());
-        this.endDate = TimestampParser.fromString(payload.getEndDate());
+
+        if (payload.getStartDate() != null && !payload.getStartDate().isEmpty()) {
+            this.startDate = TimestampParser.fromString(payload.getStartDate());
+        }
+
+        if (payload.getEndDate() != null && !payload.getEndDate().isEmpty()){
+            this.endDate = TimestampParser.fromString(payload.getEndDate());
+        }
     }
 
     public Long getCustomerId() {

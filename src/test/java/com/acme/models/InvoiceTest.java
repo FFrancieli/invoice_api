@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class InvoiceTest {
@@ -28,7 +29,46 @@ public class InvoiceTest {
         assertThat(invoice.getPaymentDueDate(), is(TimestampParser.fromString(payload.getPaymentDueDate())));
         assertThat(invoice.getStartDate(), is(TimestampParser.fromString(payload.getStartDate())));
         assertThat(invoice.getEndDate(), is(TimestampParser.fromString(payload.getEndDate())));
+    }
 
+    @Test
+    public void doesNotSetStartDateWhenItIsEmptyOnPayload() throws Exception {
+        InvoicePayload payload = buildInvoicePayload();
+        payload.setStartDate("");
+
+        Invoice invoice = new Invoice(payload);
+
+        assertThat(invoice.getStartDate(), is(nullValue()));
+    }
+
+    @Test
+    public void doesNotSetStartDateWhenItIsNullOnPayload() throws Exception {
+        InvoicePayload payload = buildInvoicePayload();
+        payload.setStartDate(null);
+
+        Invoice invoice = new Invoice(payload);
+
+        assertThat(invoice.getStartDate(), is(nullValue()));
+    }
+
+    @Test
+    public void doesNotSetEndDateWhenItIsEmptyOnPayload() throws Exception {
+        InvoicePayload payload = buildInvoicePayload();
+        payload.setEndDate("");
+
+        Invoice invoice = new Invoice(payload);
+
+        assertThat(invoice.getEndDate(), is(nullValue()));
+    }
+
+    @Test
+    public void doesNotSetEndDateWhenItIsNullOnPayload() throws Exception {
+        InvoicePayload payload = buildInvoicePayload();
+        payload.setEndDate(null);
+
+        Invoice invoice = new Invoice(payload);
+
+        assertThat(invoice.getEndDate(), is(nullValue()));
     }
 
     private InvoicePayload buildInvoicePayload() {
