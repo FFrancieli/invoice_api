@@ -30,3 +30,8 @@ dependencies {
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+task createDB(type: Exec) {
+	workingDir 'database'
+	commandLine './create.sh'
+}
