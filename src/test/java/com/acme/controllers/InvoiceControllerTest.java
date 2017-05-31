@@ -3,12 +3,14 @@ package com.acme.controllers;
 import com.acme.models.InvoicePayload;
 import com.acme.models.InvoiceResponse;
 import com.acme.services.InvoiceService;
+import com.acme.validators.InvoicePayloadValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -106,6 +108,15 @@ public class InvoiceControllerTest {
         ResponseEntity<List<InvoiceResponse>> response = controller.retrieveInvoiceBy(anyLong(), anyString(), anyInt(), anyString());
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void initBindingForInvoicePayloadValidator() throws Exception {
+        WebDataBinder binder = mock(WebDataBinder.class);
+
+        controller.initBinder(binder);
+
+        verify(binder).setValidator(any(InvoicePayloadValidator.class));
     }
 
     private InvoicePayload generateInvoicePayload() {
