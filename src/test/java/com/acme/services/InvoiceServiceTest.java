@@ -25,7 +25,6 @@ public class InvoiceServiceTest {
     private static final Integer MONTH = 2;
     private static final String INVOICE_TYPE = "ShopPurchase";
 
-
     @Mock
     InvoiceRepository repository;
 
