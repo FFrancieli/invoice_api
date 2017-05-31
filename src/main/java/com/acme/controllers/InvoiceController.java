@@ -3,16 +3,24 @@ package com.acme.controllers;
 import com.acme.models.InvoicePayload;
 import com.acme.models.InvoiceResponse;
 import com.acme.services.InvoiceService;
+import com.acme.validators.InvoicePayloadValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/invoices")
 public class InvoiceController {
+
+    @InitBinder("invoicePayload")
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new InvoicePayloadValidator());
+    }
 
     private final InvoiceService service;
 
@@ -22,7 +30,7 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody InvoicePayload payload) {
+    public ResponseEntity<InvoiceResponse> createInvoice(@Valid @RequestBody InvoicePayload payload) {
         InvoiceResponse invoice = service.createInvoice(payload);
 
         return new ResponseEntity<>(invoice, HttpStatus.CREATED);
