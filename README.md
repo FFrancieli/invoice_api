@@ -20,3 +20,7 @@
 `gradle createDB` or `./gradlew createDB` - creates database. Make sure postgres is up when executing this step.
 
 `gradle bootRun` or `./gradlew bootRun` - starts the application
+
+#### Documentation
+
+Access http://localhost:8080/swagger-ui.html#!/invoice-controller/ for API documentation.
