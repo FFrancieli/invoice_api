@@ -45,12 +45,16 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         if (isStartDateColumn(column)) {
             stringBuilder.append(extractMonthFromDateFieldWrapper(column));
         } else {
-            stringBuilder.append(column + " = :" + column + " AND ");
+            stringBuilder.append(sqlConditionalWrapper(column));
         }
     }
 
     private String extractMonthFromDateFieldWrapper(String column) {
         return String.format("EXTRACT(MONTH FROM %s) = :%s AND ", column, column);
+    }
+
+    private String sqlConditionalWrapper(String column) {
+        return String.format("%s = :%s AND ", column, column);
     }
 
     private boolean isStartDateColumn(String column) {
